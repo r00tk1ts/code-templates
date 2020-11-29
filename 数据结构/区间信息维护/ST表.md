@@ -18,20 +18,29 @@ ST 表基于 `倍增` 思想，可以做到 $\Theta (nlogn)$ 预处理， $O(1)$
 ## C++代码
 
 ```cpp
-//第二维的长度设定为20，表示查询序列最多不超过2^20个数字，可按需求更改
-constexpr gg Max2 = 20;
-//求最大值，ST表中所有元素初始化为INT_MIN
-vector<vector<gg>> st(MAX, vector<gg>(Max2, INT_MIN));
-//初始化时默认将输入的所有数字a[i]读取到了st[i][0]的位置！！！
-void STinit() {
-    for (gg j = 1; j <= Max2; ++j) {
-        for (gg i = 1; i + (1 << j) - 1 <= ni; ++i) {
-            st[i][j] = max(st[i][j - 1], st[i + (1 << (j - 1))][j - 1]);
+class ST {
+  public:
+    //求最大值，统一赋值INT_MIN
+    ST() : st(MAX, vector<gg>(MAX2, INT_MIN)) { STinit(); }
+    gg STquery(gg l, gg r) {
+        gg s = log2(r - l + 1);
+        return max(st[l][s], st[r - (1 << s) + 1][s]);
+    }
+
+  private:
+    //第二维的长度设定为20，表示查询序列最多不超过2^20个数字，可按需求更改
+    static constexpr gg MAX2 = 20;
+    vector<vector<gg>> st;
+    void STinit() {
+        //将输入的所有数字a[i]读取到了st[i][0]的位置
+        for (gg i = 1; i <= ni; ++i) {
+            cin >> st[i][0];
+        }
+        for (gg j = 1; j <= MAX2; ++j) {
+            for (gg i = 1; i + (1 << j) - 1 <= ni; ++i) {
+                st[i][j] = max(st[i][j - 1], st[i + (1 << (j - 1))][j - 1]);
+            }
         }
     }
-}
-gg STquery(gg l, gg r) {
-    gg s = log2(r - l + 1);
-    return max(st[l][s], st[r - (1 << s) + 1][s]);
-}
+};
 ```
