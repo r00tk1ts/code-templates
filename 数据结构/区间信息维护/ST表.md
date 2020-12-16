@@ -21,7 +21,7 @@ ST 表基于 `倍增` 思想，可以做到 $\Theta (nlogn)$ 预处理， $O(1)$
 class ST {
   public:
     //求最大值，统一赋值INT_MIN
-    ST() : st(MAX, vector<gg>(MAX2, INT_MIN)) { STinit(); }
+    ST(gg len) : n(len), st(len, vector<gg>(len2 + 5, INT_MIN)) { STinit(); }
     gg STquery(gg l, gg r) {
         gg s = log2(r - l + 1);
         return max(st[l][s], st[r - (1 << s) + 1][s]);
@@ -29,15 +29,16 @@ class ST {
 
   private:
     //第二维的长度设定为20，表示查询序列最多不超过2^20个数字，可按需求更改
-    static constexpr gg MAX2 = 20;
+    static constexpr gg len2 = 20;
+    gg n;  //记录输入序列的长度
     vector<vector<gg>> st;
     void STinit() {
         //将输入的所有数字a[i]读取到了st[i][0]的位置
-        for (gg i = 1; i <= ni; ++i) {
+        for (gg i = 1; i <= n; ++i) {
             cin >> st[i][0];
         }
-        for (gg j = 1; j <= MAX2; ++j) {
-            for (gg i = 1; i + (1 << j) - 1 <= ni; ++i) {
+        for (gg j = 1; j <= len2; ++j) {
+            for (gg i = 1; i + (1 << j) - 1 <= n; ++i) {
                 st[i][j] = max(st[i][j - 1], st[i + (1 << (j - 1))][j - 1]);
             }
         }
